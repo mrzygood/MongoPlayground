@@ -9,7 +9,9 @@ public sealed class ProductRepository
 {
     private readonly IMongoCollection<Product> _productsCollection;
 
-    public ProductRepository(IMongoClientAccessor mongoClientAccessor, IOptions<MongoDbSettings> mongoSettings)
+    public ProductRepository(
+        IMongoClientAccessor mongoClientAccessor,
+        IOptions<MongoDbSettings> mongoSettings)
     {
         _productsCollection = mongoClientAccessor
             .GetClient()

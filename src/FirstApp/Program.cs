@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.Services.GetRequiredService<IMongoClientAccessor>().GetClient().StartSession();
+app.Services.ConnectToMongo();
 
 app.MapGet("/", () => "Hello World!");
 
