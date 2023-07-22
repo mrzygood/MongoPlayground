@@ -1,4 +1,3 @@
-using FirstApp.Mongo;
 using FirstApp.MongoDB;
 using FirstApp.Products;
 using FirstApp.Settings;
@@ -6,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IMongoDbConnector, MongoDbConnector>();
+builder.Services.AddSingleton<IMongoClientAccessor, MongoClientAccessor>();
 builder.Services.AddOptions<MongoDbSettings>().Bind(builder.Configuration.GetSection("Mongo"));
 builder.Services.AddSingleton<ProductRepository>();
 
@@ -15,6 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.Services.GetRequiredService<IMongoClientAccessor>().GetClient().StartSession();
 
 app.MapGet("/", () => "Hello World!");
 

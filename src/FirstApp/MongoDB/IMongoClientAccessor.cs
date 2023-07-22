@@ -4,27 +4,34 @@ using MongoDB.Driver;
 
 namespace FirstApp.MongoDB;
 
-public interface IMongoDbConnector
-{
-   IMongoDatabase Connect();
+public interface IMongoClientAccessor
+{ 
+    IMongoClient GetClient();
 }
 
-public class MongoDbConnector : IMongoDbConnector
+public class MongoClientAccessor : IMongoClientAccessor
 {
     private readonly IOptions<MongoDbSettings> _mongoSettings;
+    private IMongoClient? _mongoClient;
 
-    public MongoDbConnector(IOptions<MongoDbSettings> mongoSettings)
+    public MongoClientAccessor(IOptions<MongoDbSettings> mongoSettings)
     {
         _mongoSettings = mongoSettings;
     }
 
-    public IMongoDatabase Connect()
+    public IMongoClient GetClient()
     {
+        if (_mongoClient != null)
+        {
+            return _mongoClient;
+        }
+        
         var settings = MongoClientSettings.FromConnectionString(_mongoSettings.Value.Url);
         settings.ConnectTimeout = TimeSpan.FromSeconds(4);
         settings.SocketTimeout = TimeSpan.FromSeconds(4);
         
-        var client = new MongoClient(settings);
-        return client.GetDatabase(_mongoSettings.Value.Database);
+        _mongoClient = new MongoClient(settings);
+
+        return _mongoClient;
     }
 }

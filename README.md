@@ -98,22 +98,5 @@ Orthogonal pattern to Polymorphism.
 Reduces working set size.
 ![subset_pattern_summary](./assets/images/subset_pattern.png "Subset pattern summary")
 
-### Example_section
-Benefits, use cases:
-- 
-
-Concerns:
-- 
-
-Examples:
-- 
-
-# Tools
-
-### Using schema validator
-```powershell
-.\validate_m320 example --file answer_schema.json
-```
-
 ### TODO/to learn, implements
 - Change stream in app (as BackgroundService?)

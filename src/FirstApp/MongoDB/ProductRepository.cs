@@ -1,19 +1,20 @@
-﻿using FirstApp.MongoDB;
-using FirstApp.Products;
+﻿using FirstApp.Products;
 using FirstApp.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace FirstApp.Mongo;
+namespace FirstApp.MongoDB;
 
 public sealed class ProductRepository
 {
     private readonly IMongoCollection<Product> _productsCollection;
 
-    public ProductRepository(IMongoDbConnector mongoDbConnector, IOptions<MongoDbSettings> mongoSettings)
+    public ProductRepository(IMongoClientAccessor mongoClientAccessor, IOptions<MongoDbSettings> mongoSettings)
     {
-        var database = mongoDbConnector.Connect();
-        _productsCollection = database.GetCollection<Product>(mongoSettings.Value.ProductsCollectionName);
+        _productsCollection = mongoClientAccessor
+            .GetClient()
+            .GetDatabase(mongoSettings.Value.Database)
+            .GetCollection<Product>(mongoSettings.Value.ProductsCollectionName);
     }
 
     public async Task<ICollection<Product>> GetAsync(string categoryName)
