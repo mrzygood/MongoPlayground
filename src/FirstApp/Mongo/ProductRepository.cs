@@ -1,4 +1,5 @@
-﻿using FirstApp.Products;
+﻿using FirstApp.MongoDB;
+using FirstApp.Products;
 using FirstApp.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -9,24 +10,9 @@ public sealed class ProductRepository
 {
     private readonly IMongoCollection<Product> _productsCollection;
 
-    public ProductRepository(IOptions<MongoDbSettings> mongoSettings)
+    public ProductRepository(IMongoDbConnector mongoDbConnector, IOptions<MongoDbSettings> mongoSettings)
     {
-        var settings = MongoClientSettings.FromConnectionString(mongoSettings.Value.Url);
-        settings.ConnectTimeout = TimeSpan.FromSeconds(4);
-        settings.SocketTimeout = TimeSpan.FromSeconds(4);
-        //
-        // BsonClassMap.RegisterClassMap<Product>(classMap =>
-        // {
-        //     classMap.AutoMap();
-        //     classMap.MapMember(p => p.Name).SetElementName("name");
-        //     classMap.MapMember(p => p.Price).SetElementName("price");
-        //     classMap.MapMember(p => p.Category).SetElementName("category");
-        //     classMap.MapMember(p => p.Description).SetElementName("description");
-        // });
-
-        
-        var client = new MongoClient(settings);
-        var database = client.GetDatabase(mongoSettings.Value.Database);
+        var database = mongoDbConnector.Connect();
         _productsCollection = database.GetCollection<Product>(mongoSettings.Value.ProductsCollectionName);
     }
 
